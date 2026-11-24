@@ -2,8 +2,6 @@ import pytest
 
 from inventory.stock import new_stock
 
-# uv run pytest -k stockout
-
 
 @pytest.mark.parametrize(
     "current, delta, expected",
@@ -19,6 +17,6 @@ def test_new_stock(current: int, delta: int, expected: int) -> None:
 
 
 def test_negative_stock() -> None:
-    pattern = r"^Negative Inventory, current: \d - delta: -?\d$"
+    pattern = r"^Negative Inventory, current: \d+, delta: -?\d+$"
     with pytest.raises(ValueError, match=pattern):
         new_stock(current=2, delta=-5)
