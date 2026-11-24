@@ -1,2 +1,6 @@
 def new_stock(current: int, delta: int) -> int:
-    return current + delta
+    stock: int = current + delta
+    if stock >= 0:
+        return stock
+    else:
+        raise ValueError("Negative Inventory")
