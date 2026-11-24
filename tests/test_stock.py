@@ -3,12 +3,14 @@ import pytest
 from inventory.stock import new_stock
 
 
-def test_entry_increase_stock() -> None:
-    assert new_stock(current=10, delta=5) == 15
+@pytest.mark.parametrize("current, delta, expected", 
+                         [pytest.param(10,5,15, id="Increase Stock"),
+                          pytest.param(10,-3,7, id="Decrease Stock")
+                          ])
 
-def test_decrease_stock() -> None:
-    assert new_stock(current=10, delta=-3) == 7
+def test_new_stock(current:int, delta:int, expected:int) -> None:
+    assert new_stock(current=current, delta=delta) == expected
 
 def test_negative_stock() -> None:
     with pytest.raises(ValueError, match="Negative Inventory"):
-        assert new_stock(current=2, delta=-5)
+        new_stock(current=2, delta=-5)
