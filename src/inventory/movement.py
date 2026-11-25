@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from enum import auto
 from typing import assert_never
@@ -17,7 +18,14 @@ class Movement:
     quantity: int
 
     def __post_init__(self):
-        pass
+        print ("ejecutado")
+        if re.match(r"^\s*$", self.sku):
+            raise ValueError("Invalid sku: must not be empty or blank")
+        elif self.quantity == 0:
+            raise ValueError("Invalid quantity (Zero)")
+        elif self.quantity < 0:
+            raise ValueError("Invalid quantity (Negative)")
+        
 
     @property
     def delta(self) -> int:
