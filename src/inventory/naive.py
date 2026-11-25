@@ -43,19 +43,3 @@ def stock_of(connection: sqlite3.Connection, sku: str) -> int:
     row = cursor.fetchone()
 
     return row[0] if row else 0
-
-
-"""
-CREATE TABLE IF NOT EXISTS stock (
-    sku      TEXT PRIMARY KEY,
-    quantity INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS movements (
-    id         INTEGER PRIMARY KEY,
-    sku        TEXT NOT NULL,
-    kind       TEXT NOT NULL,
-    quantity   INTEGER NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-"""
