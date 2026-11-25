@@ -87,13 +87,16 @@ def conn(tmp_path: Path) -> Iterator[sqlite3.Connection]:
     yield connection
     connection.close()
 
+
 def test_stock_of_unknown_product_is_zero(conn: sqlite3.Connection) -> None:
     assert stock_of(conn, "NOPE-1") == 0
+
 
 def test_saved_stock_can_be_read(conn: sqlite3.Connection) -> None:
     save_stock(conn, "ABC-1", 5)
 
     assert stock_of(conn, "ABC-1") == 5
+
 
 def test_save_stock_overwrites_previous_value(conn: sqlite3.Connection) -> None:
     save_stock(conn, "ABC-1", 5)
