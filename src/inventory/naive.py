@@ -1,5 +1,5 @@
 import sqlite3
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 
 from inventory.movement import Movement
 from inventory.stock import new_stock
@@ -19,7 +19,7 @@ def record_movement(
     notify_store(movement.sku, updated)
 
 
-def create_schema(connection: sqlite3.Connection):
+def create_schema(connection: sqlite3.Connection) -> None:
 
     create_table_script = """CREATE TABLE IF NOT EXISTS stock (
                              sku      TEXT PRIMARY KEY,
@@ -31,7 +31,7 @@ def create_schema(connection: sqlite3.Connection):
     connection.commit()
 
 
-def save_stock(connection: sqlite3.Connection, sku: str, quantity: int):
+def save_stock(connection: sqlite3.Connection, sku: str, quantity: int) -> None:
     query = """INSERT INTO stock(sku, quantity) VALUES (?, ?)
                ON CONFLICT(sku) DO UPDATE SET quantity = excluded.quantity"""
     connection.execute(query, (sku, quantity))
