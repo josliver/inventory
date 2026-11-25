@@ -29,13 +29,13 @@ def test_entry_for_new_product_creates_stock() -> None:
     assert stock == {"ABC-1": 5}
 
 
-def test_movements_accumulate_on_existing_product() -> None:
-    stock = {"ABC-1": 10, "XYZ-9": 4}
-    movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
+#def test_movements_accumulate_on_existing_product() -> None:
+#    stock = {"ABC-1": 10, "XYZ-9": 4}
+#    movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
 
-    record_movement(stock=stock, movement=movement, notify_store=ignore_store)
+#    record_movement(stock=stock, movement=movement, notify_store=ignore_store)
 
-    assert stock == {"ABC-1": 7, "XYZ-9": 4}
+#    assert stock == {"ABC-1": 7, "XYZ-9": 4}
 
 
 def test_exit_exceeding_stock_is_rejected_and_stock_unchanged() -> None:
@@ -87,6 +87,15 @@ def conn(tmp_path: Path) -> Iterator[sqlite3.Connection]:
     yield connection
     connection.close()
 
+def test_movements_accumulate_on_existing_product(conn: sqlite3.Connection) -> None:
+    save_stock(conn, "ABC-1", 10)
+    save_stock(conn, "XYZ-9", 4)
+    movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
+
+    record_movement(conn, movement, notify_store=ignore_store)
+
+    assert stock_of(conn, "ABC-1") == 7
+    assert stock_of(conn, "XYZ-9") == 4
 
 def test_stock_of_unknown_product_is_zero(conn: sqlite3.Connection) -> None:
     assert stock_of(conn, "NOPE-1") == 0
