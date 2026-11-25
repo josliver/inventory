@@ -16,3 +16,13 @@ def record_movement(
     stock[movement.sku] = updated
 
     notify_store(movement.sku, updated)
+
+
+def create_schema():
+    pass
+
+def save_stock():
+    pass
+
+def stock_of():
+    pass

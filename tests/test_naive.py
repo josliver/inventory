@@ -1,7 +1,11 @@
+import sqlite3
+from collections.abc import Iterator
+from pathlib import Path
+
 import pytest
 
 from inventory.movement import Movement, MovementType
-from inventory.naive import record_movement
+from inventory.naive import create_schema, record_movement, save_stock, stock_of
 
 
 class StoreSpy:
@@ -74,3 +78,25 @@ def test_store_is_not_notified_when_movement_is_rejected() -> None:
         )
 
     assert store.calls == []
+
+
+@pytest.fixture
+def conn(tmp_path: Path) -> Iterator[sqlite3.Connection]:
+    connection = sqlite3.connect(tmp_path / "inventory.db", autocommit=False)
+    create_schema(connection)
+    yield connection
+    connection.close()
+
+def test_stock_of_unknown_product_is_zero(conn: sqlite3.Connection) -> None:
+    assert stock_of(conn, "NOPE-1") == 0
+
+def test_saved_stock_can_be_read(conn: sqlite3.Connection) -> None:
+    save_stock(conn, "ABC-1", 5)
+
+    assert stock_of(conn, "ABC-1") == 5
+
+def test_save_stock_overwrites_previous_value(conn: sqlite3.Connection) -> None:
+    save_stock(conn, "ABC-1", 5)
+    save_stock(conn, "ABC-1", 2)
+
+    assert stock_of(conn, "ABC-1") == 2
