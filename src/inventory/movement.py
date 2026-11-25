@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import auto
+from typing import assert_never
 
 from strenum import StrEnum
 
@@ -7,6 +8,7 @@ from strenum import StrEnum
 class MovementType(StrEnum):
     IN = auto()
     OUT = auto()
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Movement:
@@ -17,3 +19,12 @@ class Movement:
     def __post_init__(self):
         pass
 
+    @property
+    def delta(self) -> int:
+        match self.kind:
+            case MovementType.IN:
+                return self.quantity
+            case MovementType.OUT:
+                return self.quantity * -1
+            case _:
+                assert_never(self.kind)
