@@ -12,6 +12,7 @@ def test_entry_for_new_product_creates_stock() -> None:
 
     assert stock == {"ABC-1": 5}
 
+
 def test_movements_accumulate_on_existing_product() -> None:
     stock = {"ABC-1": 10, "XYZ-9": 4}
     movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
