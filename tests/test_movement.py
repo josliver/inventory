@@ -23,6 +23,7 @@ def test_movement_is_immutable() -> None:
 )
 def test_calculate_delta(kind: MovementType, quantity: int, expected: int) -> None:
     movement = Movement(sku="ABC-1", kind=kind, quantity=quantity)
+
     assert movement.delta == expected
 
 
@@ -32,12 +33,12 @@ def test_calculate_delta(kind: MovementType, quantity: int, expected: int) -> No
         pytest.param(
             0,
             "Invalid quantity: must be positive, got 0",
-            id="quantity-non-valid-zero",
+            id="quantity-zero",
         ),
         pytest.param(
             -1,
             "Invalid quantity: must be positive, got -1",
-            id="quantity-non-valid-neg",
+            id="quantity-neg",
         ),
     ],
 )
@@ -47,22 +48,20 @@ def test_non_positive_quantity_is_rejected(quantity: int, expected: str) -> None
 
 
 @pytest.mark.parametrize(
-    "sku, expected",
+    "sku",
     [
         pytest.param(
             "",
-            "Invalid sku: must not be empty or blank",
             id="sku-non-valid-empty",
         ),
         pytest.param(
             "     ",
-            "Invalid sku: must not be empty or blank",
             id="sku-non-valid-spaces",
         ),
     ],
 )
-def test_blank_sku_is_rejected(sku: str, expected: str) -> None:
-    with pytest.raises(ValueError, match=re.escape(expected)):
+def test_blank_sku_is_rejected(sku: str) -> None:
+    with pytest.raises(ValueError, match="Invalid sku: must not be empty or blank"):
         Movement(sku=sku, kind=MovementType.IN, quantity=10)
 
 
