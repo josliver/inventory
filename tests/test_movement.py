@@ -38,3 +38,9 @@ def test_calculate_delta(kind: MovementType, quantity: int, expected: int) -> No
 def test_movement_exceptions(sku: str, kind: MovementType, quantity: int, expected: str) -> None:
     with pytest.raises(ValueError, match=re.escape(expected)):
         Movement(sku=sku, kind=kind,quantity=quantity)
+
+def test_movements_compare() -> None:
+    m1 = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
+    m2 = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
+
+    assert m1 == m2
