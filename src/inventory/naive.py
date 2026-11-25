@@ -25,9 +25,9 @@ def create_schema(connection: sqlite3.Connection) -> None:
                              sku      TEXT PRIMARY KEY,
                              quantity INTEGER NOT NULL);
                           """
-    cursor = connection.cursor()
+    # cursor = connection.cursor()
 
-    cursor.execute(create_table_script)
+    connection.execute(create_table_script)
     connection.commit()
 
 
