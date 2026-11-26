@@ -6,28 +6,25 @@ from inventory.stock import new_stock
 
 
 def record_movement(
-    conn: sqlite3.Connection,
+    connection: sqlite3.Connection,
     movement: Movement,
     *,
     notify_store: Callable[[str, int], None],
 ) -> None:
-
-    current = stock_of(conn, movement.sku)
+    current = stock_of(connection, movement.sku)
     updated = new_stock(current=current, delta=movement.delta)
 
-    save_stock(conn, movement.sku, updated)
-    conn.commit()
+    save_stock(connection, movement.sku, updated)
+    connection.commit()
 
     notify_store(movement.sku, updated)
 
 
 def create_schema(connection: sqlite3.Connection) -> None:
-
     create_table_script = """CREATE TABLE IF NOT EXISTS stock (
                              sku      TEXT PRIMARY KEY,
                              quantity INTEGER NOT NULL);
                           """
-    # cursor = connection.cursor()
 
     connection.execute(create_table_script)
     connection.commit()
