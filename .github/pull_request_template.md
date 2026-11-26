@@ -10,4 +10,5 @@
 ## Checklist
 - [ ] Tests en verde (`uv run pytest`)
 - [ ] `uv run ruff check .` y `uv run ruff format --check .` sin errores
+- [ ] Pasa el chequeo de tipos (`uv run mypy`)
 - [ ] Commits con Conventional Commits
