@@ -11,12 +11,12 @@ def record_movement(
     *,
     notify_store: Callable[[str, int], None],
 ) -> None:
-    # current = stock.get(movement.sku, 0)
+
     current = stock_of(conn, movement.sku)
     updated = new_stock(current=current, delta=movement.delta)
 
-    # stock[movement.sku] = updated
     save_stock(conn, movement.sku, updated)
+    conn.commit()
 
     notify_store(movement.sku, updated)
 
