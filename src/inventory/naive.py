@@ -6,15 +6,17 @@ from inventory.stock import new_stock
 
 
 def record_movement(
-    stock: dict[str, int],
+    conn: sqlite3.Connection,
     movement: Movement,
     *,
     notify_store: Callable[[str, int], None],
 ) -> None:
-    current = stock.get(movement.sku, 0)
+    # current = stock.get(movement.sku, 0)
+    current = stock_of(conn, movement.sku)
     updated = new_stock(current=current, delta=movement.delta)
 
-    stock[movement.sku] = updated
+    # stock[movement.sku] = updated
+    save_stock(conn, movement.sku, updated)
 
     notify_store(movement.sku, updated)
 
