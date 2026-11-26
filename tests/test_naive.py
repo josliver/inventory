@@ -32,7 +32,7 @@ def conn(tmp_path: Path) -> Iterator[Connection]:
 def test_entry_for_new_product_creates_stock(conn: Connection) -> None:
     movement = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
 
-    record_movement(conn=conn, movement=movement, notify_store=ignore_store)
+    record_movement(connection=conn, movement=movement, notify_store=ignore_store)
 
     assert stock_of(conn, "ABC-1") == 5
 
@@ -42,7 +42,7 @@ def test_exit_exceeding_stock_is_rejected_and_stock_unchanged(conn: Connection) 
     movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=5)
 
     with pytest.raises(ValueError):
-        record_movement(conn=conn, movement=movement, notify_store=ignore_store)
+        record_movement(connection=conn, movement=movement, notify_store=ignore_store)
 
     assert stock_of(conn, "ABC-1") == 2
 
@@ -52,12 +52,12 @@ def test_store_is_notified_with_remaining_stock(conn: Connection) -> None:
     store = StoreSpy()
 
     record_movement(
-        conn=conn,
+        connection=conn,
         movement=Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3),
         notify_store=store,
     )
     record_movement(
-        conn=conn,
+        connection=conn,
         movement=Movement(sku="NEW-1", kind=MovementType.IN, quantity=2),
         notify_store=store,
     )
@@ -72,7 +72,7 @@ def test_store_is_not_notified_when_movement_is_rejected(conn: Connection) -> No
 
     with pytest.raises(ValueError):
         record_movement(
-            conn=conn,
+            connection=conn,
             movement=Movement(sku="ABC-1", kind=MovementType.OUT, quantity=5),
             notify_store=store,
         )
