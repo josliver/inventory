@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+from contextlib import closing
 from pathlib import Path
 from sqlite3 import Connection, connect
 
@@ -105,3 +106,12 @@ def test_save_stock_overwrites_previous_value(conn: Connection) -> None:
     save_stock(conn, "ABC-1", 2)
 
     assert stock_of(conn, "ABC-1") == 2
+
+
+def test_each_movement_is_committed(conn: Connection, tmp_path: Path) -> None:
+    movement = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
+
+    record_movement(conn, movement, notify_store=ignore_store)
+
+    with closing(connect(tmp_path / "inventory.db")) as other:
+        assert stock_of(other, "ABC-1") == 5
