@@ -40,8 +40,8 @@ def save_stock(connection: sqlite3.Connection, sku: str, quantity: int) -> None:
 
 
 def stock_of(connection: sqlite3.Connection, sku: str) -> int:
-    cursor = connection.cursor()
-    cursor.execute("SELECT quantity FROM stock WHERE sku = ?", (sku,))
+
+    cursor = connection.execute("SELECT quantity FROM stock WHERE sku = ?", (sku,))
     row = cursor.fetchone()
 
     return row[0] if row else 0
