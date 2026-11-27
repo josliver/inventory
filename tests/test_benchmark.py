@@ -1,9 +1,11 @@
+from data_builder import a_movement
+
 from inventory.benchmark import Measurement, make_slow_store, measure
 from inventory.movement import Movement, MovementType
 
 
 def test_measure_uses_clock_to_compute_elapsed_seconds() -> None:
-    movements = [Movement(sku="ABC-1", kind=MovementType.IN, quantity=1)] * 3
+    movements = [a_movement(sku="ABC-1", kind=MovementType.IN, quantity=1)] * 3
     fake_clock = iter([10.0, 12.5]).__next__
 
     result = measure(movements, record=lambda movement: None, clock=fake_clock)
@@ -14,9 +16,9 @@ def test_measure_uses_clock_to_compute_elapsed_seconds() -> None:
 
 def test_measure_records_each_movement_in_order() -> None:
     movements = [
-        Movement(sku="ABC-1", kind=MovementType.IN, quantity=1),
-        Movement(sku="XYZ-9", kind=MovementType.OUT, quantity=2),
-        Movement(sku="ABC-1", kind=MovementType.IN, quantity=3),
+        a_movement(sku="ABC-1", kind=MovementType.IN, quantity=1),
+        a_movement(sku="XYZ-9", kind=MovementType.OUT, quantity=2),
+        a_movement(sku="ABC-1", kind=MovementType.IN, quantity=3),
     ]
     recorded: list[Movement] = []
 

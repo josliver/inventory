@@ -11,12 +11,16 @@ class MovementType(StrEnum):
 @dataclass(frozen=True, slots=True, kw_only=True)
 class Movement:
     sku: str
+    warehouse: str
     kind: MovementType
     quantity: int
 
     def __post_init__(self) -> None:
         if not self.sku.strip():
             raise ValueError("Invalid sku: must not be empty or blank")
+
+        if not self.warehouse.strip():
+            raise ValueError("warehouse")
 
         if self.quantity <= 0:
             raise ValueError(f"Invalid quantity: must be positive, got {self.quantity}")

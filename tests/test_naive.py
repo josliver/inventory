@@ -4,8 +4,9 @@ from pathlib import Path
 from sqlite3 import Connection, connect
 
 import pytest
+from data_builder import a_movement
 
-from inventory.movement import Movement, MovementType
+from inventory.movement import MovementType
 from inventory.naive import create_schema, record_movement, save_stock, stock_of
 
 
@@ -30,7 +31,7 @@ def conn(tmp_path: Path) -> Iterator[Connection]:
 
 
 def test_entry_for_new_product_creates_stock(conn: Connection) -> None:
-    movement = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
+    movement = a_movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
 
     record_movement(connection=conn, movement=movement, notify_store=ignore_store)
 
@@ -39,7 +40,7 @@ def test_entry_for_new_product_creates_stock(conn: Connection) -> None:
 
 def test_exit_exceeding_stock_is_rejected_and_stock_unchanged(conn: Connection) -> None:
     save_stock(conn, "ABC-1", 2)
-    movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=5)
+    movement = a_movement(sku="ABC-1", kind=MovementType.OUT, quantity=5)
 
     with pytest.raises(ValueError):
         record_movement(connection=conn, movement=movement, notify_store=ignore_store)
@@ -53,12 +54,12 @@ def test_store_is_notified_with_remaining_stock(conn: Connection) -> None:
 
     record_movement(
         connection=conn,
-        movement=Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3),
+        movement=a_movement(sku="ABC-1", kind=MovementType.OUT, quantity=3),
         notify_store=store,
     )
     record_movement(
         connection=conn,
-        movement=Movement(sku="NEW-1", kind=MovementType.IN, quantity=2),
+        movement=a_movement(sku="NEW-1", kind=MovementType.IN, quantity=2),
         notify_store=store,
     )
 
@@ -73,7 +74,7 @@ def test_store_is_not_notified_when_movement_is_rejected(conn: Connection) -> No
     with pytest.raises(ValueError):
         record_movement(
             connection=conn,
-            movement=Movement(sku="ABC-1", kind=MovementType.OUT, quantity=5),
+            movement=a_movement(sku="ABC-1", kind=MovementType.OUT, quantity=5),
             notify_store=store,
         )
 
@@ -83,7 +84,7 @@ def test_store_is_not_notified_when_movement_is_rejected(conn: Connection) -> No
 def test_movements_accumulate_on_existing_product(conn: Connection) -> None:
     save_stock(conn, "ABC-1", 10)
     save_stock(conn, "XYZ-9", 4)
-    movement = Movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
+    movement = a_movement(sku="ABC-1", kind=MovementType.OUT, quantity=3)
 
     record_movement(conn, movement, notify_store=ignore_store)
 
@@ -109,7 +110,7 @@ def test_save_stock_overwrites_previous_value(conn: Connection) -> None:
 
 
 def test_each_movement_is_committed(conn: Connection, tmp_path: Path) -> None:
-    movement = Movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
+    movement = a_movement(sku="ABC-1", kind=MovementType.IN, quantity=5)
 
     record_movement(conn, movement, notify_store=ignore_store)
 
