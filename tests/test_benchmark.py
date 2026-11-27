@@ -31,6 +31,12 @@ def test_rate_is_movements_per_second() -> None:
     assert result.rate == 24.0
 
 
+def test_rate_is_float() -> None:
+    result = Measurement(count=3, seconds=2)
+
+    assert result.rate == 1.5
+
+
 def test_slow_store_waits_the_given_delay_on_each_call() -> None:
     sleeps: list[float] = []
     store = make_slow_store(0.04, sleep=sleeps.append)
