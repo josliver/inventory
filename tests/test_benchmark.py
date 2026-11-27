@@ -31,7 +31,7 @@ def test_rate_is_movements_per_second() -> None:
     assert result.rate == 24.0
 
 
-def test_rate_is_float() -> None:
+def test_rate_keeps_decimals() -> None:
     result = Measurement(count=3, seconds=2)
 
     assert result.rate == 1.5
