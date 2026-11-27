@@ -26,4 +26,4 @@ addopts = "-ra --strict-markers"
 
 [tool.mypy]
 strict = true
-files = ["src", "tests"]
+files = ["src", "benchmarks", "tests"]
