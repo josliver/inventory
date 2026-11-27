@@ -2,7 +2,7 @@ import time
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
-from inventory.movement import Movement, MovementType
+from inventory.movement import Movement
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -11,8 +11,8 @@ class Measurement:
     seconds: float
 
     @property
-    def rate(self) -> int:
-        return int(self.count / self.seconds)
+    def rate(self) -> float:
+        return self.count / self.seconds
 
 
 def measure(
@@ -45,8 +45,3 @@ def make_slow_store(
         sleep(delay)
 
     return slow_store
-
-
-if __name__ == "__main__":
-    movements = [Movement(sku="ABC-1", kind=MovementType.IN, quantity=1)] * 3
-    print(measure(movements, record=lambda movement: None, clock=time.perf_counter))
