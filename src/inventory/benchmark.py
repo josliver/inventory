@@ -30,6 +30,23 @@ def measure(
     return Measurement(count=count, seconds=seconds)
 
 
+def make_slow_store(
+    delay: float,
+    *,
+    sleep: Callable[
+        [
+            float,
+        ],
+        None,
+    ] = time.sleep,
+) -> Callable[[str, int], None]:
+
+    def slow_store(sku: str, stock: int) -> None:
+        sleep(delay)
+
+    return slow_store
+
+
 if __name__ == "__main__":
     movements = [Movement(sku="ABC-1", kind=MovementType.IN, quantity=1)] * 3
     print(measure(movements, record=lambda movement: None, clock=time.perf_counter))

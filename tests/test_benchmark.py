@@ -1,4 +1,4 @@
-from inventory.benchmark import Measurement, measure
+from inventory.benchmark import Measurement, make_slow_store, measure
 from inventory.movement import Movement, MovementType
 
 
@@ -29,3 +29,13 @@ def test_rate_is_movements_per_second() -> None:
     result = Measurement(count=300, seconds=12.5)
 
     assert result.rate == 24.0
+
+
+def test_slow_store_waits_the_given_delay_on_each_call() -> None:
+    sleeps: list[float] = []
+    store = make_slow_store(0.04, sleep=sleeps.append)
+
+    store("ABC-1", 5)
+    store("XYZ-9", 0)
+
+    assert sleeps == [0.04, 0.04]
